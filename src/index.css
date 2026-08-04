@@ -1,0 +1,224 @@
+/* Pure Standard CSS Rules for OPUS 25 Workspace - Independent of Tailwind */
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden !important;
+  background-color: #0b4a72; /* Steel blue outer border */
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+code, pre, .font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Outer Window Frame */
+.window-frame {
+  width: 100vw !important;
+  height: 100vh !important;
+  border: 8px solid #0b4a72 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+}
+
+/* Workspace Body: Side-by-side row of Sidebar + Center Table */
+.workspace-body {
+  display: flex !important;
+  flex-direction: row !important;
+  flex: 1 !important;
+  height: calc(100vh - 74px) !important;
+  overflow: hidden !important;
+}
+
+/* Top Ribbon Menu Bar - Strictly Horizontal Row */
+.mockup-ribbon-bar {
+  background: #ffffff !important;
+  border-bottom: 2px solid #0b4a72 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex-shrink: 0 !important;
+  height: 66px !important;
+}
+
+.ribbon-tabs-container {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 4px 8px 0 8px !important;
+  background: #e2e8f0 !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  height: 28px !important;
+}
+
+.mockup-ribbon-tab {
+  padding: 2px 10px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #334155 !important;
+  border-top-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-bottom: none !important;
+  background: #cbd5e1 !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+}
+
+.mockup-ribbon-tab.active {
+  color: #0284c7 !important;
+  background: #ffffff !important;
+  border-top: 2px solid #0284c7 !important;
+  border-left: 1px solid #0b4a72 !important;
+  border-right: 1px solid #0b4a72 !important;
+}
+
+.ribbon-buttons-container {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 4px 8px !important;
+  background: #ffffff !important;
+  height: 38px !important;
+  overflow-x: auto !important;
+}
+
+.mockup-command-btn {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 3px 8px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  cursor: pointer !important;
+}
+
+.mockup-command-btn:hover {
+  background: #f8fafc !important;
+  border-color: #0284c7 !important;
+  color: #0284c7 !important;
+}
+
+.mockup-command-btn.active {
+  background: #e0f2fe !important;
+  border-color: #0284c7 !important;
+  color: #0369a1 !important;
+  font-weight: 700 !important;
+}
+
+/* Sidebar "Explorador de vistas" */
+.mockup-sidebar {
+  background: #f1f5f9 !important;
+  border-right: 2px solid #0b4a72 !important;
+  width: 240px !important;
+  min-width: 240px !important;
+  max-width: 240px !important;
+  height: 100% !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  overflow: hidden !important;
+}
+
+/* Center Workspace */
+.workspace-center {
+  flex: 1 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  background: #ffffff !important;
+}
+
+/* Central DataGrid Table */
+.mockup-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-size: 11px !important;
+  background: #ffffff !important;
+}
+
+.mockup-table th {
+  background: #334155 !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 6px 10px !important;
+  border: 1px solid #475569 !important;
+  text-align: left !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+}
+
+.mockup-table td {
+  padding: 4px 8px !important;
+  border: 1px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #1e293b !important;
+  white-space: nowrap !important;
+}
+
+.mockup-table tr:nth-child(even) td {
+  background: #f8fafc !important;
+}
+
+.mockup-table input {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 3px !important;
+  padding: 2px 6px !important;
+  font-size: 11px !important;
+  color: #0f172a !important;
+}
+
+.mockup-table input:focus {
+  outline: 2px solid #0284c7 !important;
+  border-color: #0284c7 !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0284c7;
+}
