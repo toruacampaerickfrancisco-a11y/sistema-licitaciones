@@ -27,164 +27,96 @@ export default function OverheadsView({ sobrecostos, onUpdateSobrecosto }) {
     onUpdateSobrecosto('equipoSeguridad', avgKs);
   };
 
+  const factors = [
+    { key: 'indirectos', title: '1. Costos Indirectos (%I)', desc: 'Gastos de administración central y de campo de la contratista.', val: sob.indirectos },
+    { key: 'financiamiento', title: '2. Financiamiento (%F)', desc: 'Costo de capital derivado de los egresos no cubiertos por anticipos.', val: sob.financiamiento },
+    { key: 'utilidad', title: '3. Cargo por Utilidad (%U)', desc: 'Ganancia neta esperada por el contratista antes de impuestos.', val: sob.utilidad },
+    { key: 'cargosAdicionales', title: '4. Cargos Adicionales (%A)', desc: 'Derecho de inspección (5 al millar CFE/SFP) y auditorías.', val: sob.cargosAdicionales },
+    { key: 'herramientaMano', title: '5. Herramienta Menor (%Kh)', desc: 'Porcentaje aplicado sobre el costo total de la Mano de Obra.', val: sob.herramientaMano },
+    { key: 'equipoSeguridad', title: '6. Equipo Seguridad (%Ks)', desc: 'Equipo de protección personal (EPP) sobre el costo de Mano de Obra.', val: sob.equipoSeguridad }
+  ];
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', background: '#090d16', color: '#f8fafc', overflowY: 'auto', padding: '14px', gap: '14px' }}>
+      {/* Banner */}
+      <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', border: '1px solid rgba(129, 140, 248, 0.3)', borderRadius: '12px', padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Sliders className="w-5 h-5 text-amber-400" />
-            Matriz de Sobrecostos y Porcentajes de Licitación
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Definición de factores de Indirectos, Financiamiento, Cargo por Utilidad y Cargos Adicionales según la Ley de Obras Públicas.
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span style={{ background: 'rgba(129, 140, 248, 0.15)', color: '#818cf8', border: '1px solid rgba(129, 140, 248, 0.3)', padding: '2px 8px', borderRadius: '12px', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>
+              LOPSRM Artículos 187 al 220
+            </span>
+            <span style={{ fontSize: '11px', color: '#38bdf8', fontFamily: 'var(--font-mono)' }}>Factores de Sobrecosto</span>
+          </div>
+          <h2 style={{ fontSize: '16px', fontWeight: 800, color: '#f8fafc' }}>Matriz de Factores y Porcentajes de Licitación</h2>
         </div>
 
         <button
           onClick={applyHistoricalAvg}
-          className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-semibold px-4 py-2.5 rounded-xl border border-amber-500/30 transition shadow-md whitespace-nowrap"
+          style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(251, 191, 36, 0.15)', border: '1px solid rgba(251, 191, 36, 0.3)', color: '#fbbf24', borderRadius: '8px', padding: '6px 12px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
         >
-          <History className="w-4 h-4" />
+          <History size={13} />
           Cargar Promedio Histórico
         </button>
       </div>
 
-      {/* Main Parameters Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Indirectos */}
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase">1. Costos Indirectos (%I)</span>
-            <span className="text-xs font-mono text-emerald-400 font-bold">{formatPercent(sob.indirectos)}</span>
+      {/* Factors Input Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+        {factors.map(f => (
+          <div key={f.key} style={{ background: '#080c14', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '8px' }}>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', fontWeight: 700, color: '#818cf8' }}>
+                <span>{f.title}</span>
+                <span style={{ fontFamily: 'var(--font-mono)', color: '#34d399' }}>{formatPercent(f.val)}</span>
+              </div>
+              <p style={{ fontSize: '10px', color: '#94a3b8', marginTop: '4px', lineHeight: '1.3' }}>{f.desc}</p>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <input
+                type="number"
+                step="0.0001"
+                value={(f.val * 100).toFixed(4)}
+                onChange={(e) => onUpdateSobrecosto(f.key, (parseFloat(e.target.value) || 0) / 100)}
+                style={{ width: '100%', background: '#131d33', border: '1px solid rgba(255,255,255,0.1)', color: '#f8fafc', fontWeight: 800, fontSize: '13px', textAlign: 'right', borderRadius: '6px', padding: '4px 8px', fontFamily: 'var(--font-mono)' }}
+              />
+              <span style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8' }}>%</span>
+            </div>
           </div>
-          <p className="text-[11px] text-slate-400">Gastos de administración central y de campo de la contratista.</p>
-          <input
-            type="number"
-            step="any"
-            value={((sob.indirectos || 0) * 100).toFixed(4)}
-            onChange={(e) => onUpdateSobrecosto('indirectos', (parseFloat(e.target.value) || 0) / 100)}
-            className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 text-emerald-400 text-sm font-mono font-bold p-2 rounded-xl text-right focus:outline-none"
-          />
-        </div>
-
-        {/* Financiamiento */}
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase">2. Financiamiento (%F)</span>
-            <span className="text-xs font-mono text-emerald-400 font-bold">{formatPercent(sob.financiamiento)}</span>
-          </div>
-          <p className="text-[11px] text-slate-400">Costo de capital derivado de los egresos no cubiertos por anticipos.</p>
-          <input
-            type="number"
-            step="any"
-            value={((sob.financiamiento || 0) * 100).toFixed(4)}
-            onChange={(e) => onUpdateSobrecosto('financiamiento', (parseFloat(e.target.value) || 0) / 100)}
-            className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 text-emerald-400 text-sm font-mono font-bold p-2 rounded-xl text-right focus:outline-none"
-          />
-        </div>
-
-        {/* Utilidad */}
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase">3. Cargo por Utilidad (%U)</span>
-            <span className="text-xs font-mono text-emerald-400 font-bold">{formatPercent(sob.utilidad)}</span>
-          </div>
-          <p className="text-[11px] text-slate-400">Ganancia neta esperada por el contratista antes de impuestos.</p>
-          <input
-            type="number"
-            step="any"
-            value={((sob.utilidad || 0) * 100).toFixed(4)}
-            onChange={(e) => onUpdateSobrecosto('utilidad', (parseFloat(e.target.value) || 0) / 100)}
-            className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 text-emerald-400 text-sm font-mono font-bold p-2 rounded-xl text-right focus:outline-none"
-          />
-        </div>
-
-        {/* Cargos Adicionales */}
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase">4. Cargos Adicionales (%A)</span>
-            <span className="text-xs font-mono text-emerald-400 font-bold">{formatPercent(sob.cargosAdicionales)}</span>
-          </div>
-          <p className="text-[11px] text-slate-400">Derecho de inspección (5 al millar CFE/SFP) y auditorías.</p>
-          <input
-            type="number"
-            step="any"
-            value={((sob.cargosAdicionales || 0) * 100).toFixed(4)}
-            onChange={(e) => onUpdateSobrecosto('cargosAdicionales', (parseFloat(e.target.value) || 0) / 100)}
-            className="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 text-emerald-400 text-sm font-mono font-bold p-2 rounded-xl text-right focus:outline-none"
-          />
-        </div>
-
-        {/* Herramienta de Mano */}
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase">5. Herramienta Menor (%Kh)</span>
-            <span className="text-xs font-mono text-purple-400 font-bold">{formatPercent(sob.herramientaMano)}</span>
-          </div>
-          <p className="text-[11px] text-slate-400">Porcentaje aplicado sobre el costo total de la Mano de Obra.</p>
-          <input
-            type="number"
-            step="any"
-            value={((sob.herramientaMano || 0) * 100).toFixed(4)}
-            onChange={(e) => onUpdateSobrecosto('herramientaMano', (parseFloat(e.target.value) || 0) / 100)}
-            className="w-full bg-slate-950 border border-slate-700 focus:border-purple-500 text-purple-400 text-sm font-mono font-bold p-2 rounded-xl text-right focus:outline-none"
-          />
-        </div>
-
-        {/* Equipo de Seguridad */}
-        <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-300 uppercase">6. Equipo Seguridad (%Ks)</span>
-            <span className="text-xs font-mono text-purple-400 font-bold">{formatPercent(sob.equipoSeguridad)}</span>
-          </div>
-          <p className="text-[11px] text-slate-400">Equipo de protección personal (EPP) sobre el costo de Mano de Obra.</p>
-          <input
-            type="number"
-            step="any"
-            value={((sob.equipoSeguridad || 0) * 100).toFixed(4)}
-            onChange={(e) => onUpdateSobrecosto('equipoSeguridad', (parseFloat(e.target.value) || 0) / 100)}
-            className="w-full bg-slate-950 border border-slate-700 focus:border-purple-500 text-purple-400 text-sm font-mono font-bold p-2 rounded-xl text-right focus:outline-none"
-          />
-        </div>
+        ))}
       </div>
 
       {/* Historical Benchmarking Table */}
-      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-lg space-y-4">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-          <History className="w-4 h-4 text-amber-400" />
-          Tabla de Referencia Histórica de Empresas en Licitaciones CFE
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 uppercase font-semibold border-b border-slate-800">
-              <tr>
-                <th className="py-2.5 px-3">Compañía Licitante</th>
-                <th className="py-2.5 px-3">Concurso CFE</th>
-                <th className="py-2.5 px-3 text-right">Indirectos (%I)</th>
-                <th className="py-2.5 px-3 text-right">Finan. (%F)</th>
-                <th className="py-2.5 px-3 text-right">Utilidad (%U)</th>
-                <th className="py-2.5 px-3 text-right">Adicional (%A)</th>
-                <th className="py-2.5 px-3 text-right">Kh %</th>
-                <th className="py-2.5 px-3 text-right">Ks %</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/50 font-mono font-medium text-slate-300">
-              {historicalData.map((h, i) => (
-                <tr key={i} className="hover:bg-slate-800/30">
-                  <td className="py-2.5 px-3 text-slate-200 font-sans font-bold">{h.empresa}</td>
-                  <td className="py-2.5 px-3 text-slate-400">{h.concurso}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-400">{formatPercent(h.indirectos)}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-400">{formatPercent(h.financiamiento)}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-400">{formatPercent(h.utilidad)}</td>
-                  <td className="py-2.5 px-3 text-right text-emerald-400">{formatPercent(h.adicion)}</td>
-                  <td className="py-2.5 px-3 text-right text-purple-400">{formatPercent(h.kh)}</td>
-                  <td className="py-2.5 px-3 text-right text-purple-400">{formatPercent(h.ks)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <div style={{ background: '#080c14', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '8px', overflow: 'hidden' }}>
+        <div style={{ background: '#1e293b', padding: '8px 12px', fontWeight: 800, fontSize: '11px', color: '#fbbf24' }}>
+          TABLA DE REFERENCIA HISTÓRICA EN LICITACIONES CFE
         </div>
+        <table className="opus-grid-table">
+          <thead>
+            <tr>
+              <th>Compañía Licitante</th>
+              <th>Concurso CFE</th>
+              <th style={{ textAlign: 'right' }}>Indirectos (%I)</th>
+              <th style={{ textAlign: 'right' }}>Finan. (%F)</th>
+              <th style={{ textAlign: 'right' }}>Utilidad (%U)</th>
+              <th style={{ textAlign: 'right' }}>Adicional (%A)</th>
+              <th style={{ textAlign: 'right' }}>Kh %</th>
+              <th style={{ textAlign: 'right' }}>Ks %</th>
+            </tr>
+          </thead>
+          <tbody>
+            {historicalData.map((h, i) => (
+              <tr key={i}>
+                <td style={{ fontWeight: 700, color: '#f8fafc' }}>{h.empresa}</td>
+                <td style={{ fontFamily: 'var(--font-mono)', color: '#38bdf8' }}>{h.concurso}</td>
+                <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: '#cbd5e1' }}>{formatPercent(h.indirectos)}</td>
+                <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: '#cbd5e1' }}>{formatPercent(h.financiamiento)}</td>
+                <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: '#cbd5e1' }}>{formatPercent(h.utilidad)}</td>
+                <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: '#cbd5e1' }}>{formatPercent(h.adicion)}</td>
+                <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: '#94a3b8' }}>{(h.kh * 100).toFixed(2)}%</td>
+                <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: '#94a3b8' }}>{(h.ks * 100).toFixed(2)}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

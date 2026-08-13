@@ -18,7 +18,9 @@ import IndirectosAnaliticoView from './components/IndirectosAnaliticoView';
 import GanttScheduleView from './components/GanttScheduleView';
 import AjusteCostosView from './components/AjusteCostosView';
 import OfficialReportsView from './components/OfficialReportsView';
+import { initialProjectsList } from './data/projectsData';
 import { initialRubrosIndirectos } from './data/indirectosData';
+import MultiLicitacionesView from './components/MultiLicitacionesView';
 
 import { initialProjectData } from './data/initialData';
 import { calculateFSR } from './core/fsrEngine';
@@ -27,11 +29,71 @@ import { calculateCatalogEngine } from './core/catalogEngine';
 import { exportBudgetToExcel } from './utils/excelExport';
 
 export default function App() {
+  const [projects, setProjects] = useState(initialProjectsList);
+  const [currentProjectId, setCurrentProjectId] = useState('lic-cfe-01');
   const [activeTab, setActiveTab] = useState('catalogo');
   const [selectedApuId, setSelectedApuId] = useState('PU_1_1');
   const [showBottomMatrix, setShowBottomMatrix] = useState(true);
-  const [projectData, setProjectData] = useState(initialProjectData);
   const [rubrosIndirectos, setRubrosIndirectos] = useState(initialRubrosIndirectos);
+
+  const currentProject = projects.find(p => p.id === currentProjectId) || projects[0];
+  const projectData = currentProject.data;
+
+  const setProjectData = (updater) => {
+    setProjects(prev => prev.map(p => {
+      if (p.id === currentProjectId) {
+        const newData = typeof updater === 'function' ? updater(p.data) : updater;
+        return { ...p, data: newData };
+      }
+      return p;
+    }));
+  };
+
+  const handleSelectProject = (id) => {
+    setCurrentProjectId(id);
+    setSelectedApuId('PU_1_1');
+    setActiveTab('catalogo');
+  };
+
+  const handleAddProject = () => {
+    const newId = `lic-cfe-${Date.now()}`;
+    const newObj = {
+      id: newId,
+      codigo: `LO-018TOQ-${Math.floor(100 + Math.random() * 900)}-2026`,
+      concurso: `Concurso CFE-${Math.floor(1000 + Math.random() * 9000)}-CSCON-2026`,
+      titulo: 'NUEVA OBRA / LICITACIÓN DE MANTENIMIENTO CFE',
+      entidad: 'CFE Corporativo',
+      licitante: 'INDUSTREAM S.A. DE C.V.',
+      fecha: '2026-11-01',
+      montoEstimado: 2120519.55,
+      estado: 'En Elaboración',
+      data: JSON.parse(JSON.stringify(initialProjectData))
+    };
+    setProjects([...projects, newObj]);
+    setCurrentProjectId(newId);
+  };
+
+  const handleDuplicateProject = (id) => {
+    const target = projects.find(p => p.id === id);
+    if (!target) return;
+    const newId = `lic-cfe-${Date.now()}`;
+    const dup = {
+      ...JSON.parse(JSON.stringify(target)),
+      id: newId,
+      codigo: `${target.codigo}-COPIA`,
+      titulo: `${target.titulo} (Copia Plantilla)`
+    };
+    setProjects([...projects, dup]);
+  };
+
+  const handleDeleteProject = (id) => {
+    if (projects.length <= 1) return;
+    const filtered = projects.filter(p => p.id !== id);
+    setProjects(filtered);
+    if (currentProjectId === id) {
+      setCurrentProjectId(filtered[0].id);
+    }
+  };
 
   // Recálculo en tiempo real
   const fsrResult = useMemo(() => {
@@ -110,6 +172,17 @@ export default function App() {
         {/* Center Main View Canvas */}
         <main className="opus-main-view">
           <div className="opus-view-content">
+            {activeTab === 'multiProyectos' && (
+              <MultiLicitacionesView
+                projects={projects}
+                currentProjectId={currentProjectId}
+                onSelectProject={handleSelectProject}
+                onAddProject={handleAddProject}
+                onDuplicateProject={handleDuplicateProject}
+                onDeleteProject={handleDeleteProject}
+              />
+            )}
+
             {activeTab === 'catalogo' && (
               <CatalogView
                 catalogResult={catalogResult}

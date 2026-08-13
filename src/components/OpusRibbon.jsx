@@ -55,6 +55,13 @@ export default function OpusRibbon({
           <>
             <div className="opus-ribbon-group">
               <button
+                onClick={() => setActiveTab('multiProyectos')}
+                className={`opus-ribbon-btn ${activeTab === 'multiProyectos' ? 'active' : ''}`}
+              >
+                <Building2 size={18} color="#38bdf8" />
+                <span>Licitaciones</span>
+              </button>
+              <button
                 onClick={() => setActiveTab('catalogo')}
                 className={`opus-ribbon-btn ${activeTab === 'catalogo' ? 'active' : ''}`}
               >

@@ -15,7 +15,16 @@ export default function OpusSidebar({
 
       <div style={{ padding: '4px 0', overflowY: 'auto' }}>
         {/* Propuesta & Presupuesto */}
-        <div className="opus-explorer-group">Propuesta</div>
+        <div className="opus-explorer-group">Concursos CFE</div>
+        <button
+          onClick={() => setActiveTab('multiProyectos')}
+          className={`opus-explorer-item ${activeTab === 'multiProyectos' ? 'active' : ''}`}
+        >
+          <Building2 size={13} color="#38bdf8" />
+          <span>Multi-Licitaciones</span>
+        </button>
+
+        <div className="opus-explorer-group" style={{ marginTop: '6px' }}>Propuesta Activa</div>
         <button
           onClick={() => setActiveTab('catalogo')}
           className={`opus-explorer-item ${activeTab === 'catalogo' ? 'active' : ''}`}
