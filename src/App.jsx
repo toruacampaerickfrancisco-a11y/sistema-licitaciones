@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import OpusRibbon from './components/OpusRibbon';
+import OpusBiddingSidebar from './components/OpusBiddingSidebar';
 import OpusSidebar from './components/OpusSidebar';
 import OpusModuleSidebar from './components/OpusModuleSidebar';
 import OpusBottomPanel from './components/OpusBottomPanel';
@@ -155,8 +156,16 @@ export default function App() {
         onExportExcel={handleExportExcel}
       />
 
-      {/* 3. Main Workspace: Modules + Explorer + Center View */}
+      {/* 3. Main Workspace: Bidding Selector + Modules + Explorer + Center View */}
       <div className="opus-workspace">
+        {/* Left Sidebar 0: Multi-Licitaciones Selector */}
+        <OpusBiddingSidebar
+          projects={projects}
+          currentProjectId={currentProjectId}
+          onSelectProject={handleSelectProject}
+          onAddProject={handleAddProject}
+        />
+
         {/* Left Sidebar 1: Módulos M1-M6 */}
         <OpusModuleSidebar
           activeTab={activeTab}

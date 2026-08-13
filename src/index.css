@@ -167,6 +167,43 @@ html, body, #root {
   overflow: hidden;
 }
 
+/* Left Sidebar 0: Bidding Tenders Selector */
+.opus-bidding-sidebar {
+  width: 175px;
+  min-width: 175px;
+  background: #060911;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.opus-bidding-item {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.opus-bidding-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+
+.opus-bidding-item.active {
+  background: rgba(56, 189, 248, 0.12);
+  border-left: 3px solid #38bdf8;
+  color: #38bdf8;
+}
+
 /* Left Sidebar 1: Modules */
 .opus-modules-sidebar {
   width: 170px;
