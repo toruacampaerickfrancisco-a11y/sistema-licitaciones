@@ -117,6 +117,26 @@ export const initialProjectData = {
 
   // Precios Unitarios Base (Tarjetas APU)
   tarjetasAPU: {
+    "AUX_CONCRETO": {
+      id: "AUX_CONCRETO",
+      codigoConcepto: "AUX-01",
+      especificacion: "AUX-MEZCLA",
+      descripcion: "ELABORACIÓN DE MEZCLA DE CONCRETO F'C=200 KG/CM2 EN OBRA CON REVOLVEDORA",
+      unidad: "M3",
+      hoja: 1,
+      totalHojas: 1,
+      materiales: [
+        { materialId: "MAT_01", consumo: 0.05 },
+        { materialId: "MAT_10", consumo: 350.0 }
+      ],
+      manoObra: [
+        { cuadrillaId: "CUAD_2", rendimiento: 15.0 }
+      ],
+      equipo: [
+        { equipoId: "EQ_03", rendimiento: 8.0 }
+      ]
+    },
+
     "PU_1_1": {
       id: "PU_1_1",
       codigoConcepto: "1.1",
@@ -125,6 +145,9 @@ export const initialProjectData = {
       unidad: "ML",
       hoja: 1,
       totalHojas: 7,
+      auxiliares: [
+        { auxiliarId: "AUX_CONCRETO", consumo: 0.05 }
+      ],
       materiales: [
         { materialId: "MAT_01", consumo: 0.012 },
         { materialId: "MAT_02", consumo: 0.06 },

@@ -1,6 +1,7 @@
 /**
-  Engine de cálculo para Tarjetas de Precios Unitarios (APU),
-  Cuadrillas, Insumos y Cascada de Sobrecostos conforme a la LOPSRM.
+ * Engine de cálculo profesional para Tarjetas de Precios Unitarios (APU).
+ * Soporta Matrices Auxiliares Sub-compuestas (APUs dentro de APUs),
+ * Cuadrillas, Insumos y Cascada de Sobrecostos conforme a la LOPSRM.
  */
 
 export function calculateAPUEngine(data, fsrCalculated) {
@@ -53,13 +54,21 @@ export function calculateAPUEngine(data, fsrCalculated) {
     return cuadrillaObj;
   });
 
-  // 5. Cálculo detallado de Tarjetas de Precios Unitarios (APU)
+  // 5. Cálculo recursivo de Tarjetas de Precios Unitarios (incluyendo Auxiliares/Sub-matrices)
   const tarjetasCalculadas = {};
 
-  Object.keys(tarjetasAPU).forEach(apuKey => {
+  const computeSingleAPU = (apuKey, visitingSet = new Set()) => {
+    if (tarjetasCalculadas[apuKey]) return tarjetasCalculadas[apuKey];
     const apu = tarjetasAPU[apuKey];
+    if (!apu) return null;
 
-    // a) Materiales
+    if (visitingSet.has(apuKey)) {
+      console.warn(`[APU Engine] Ciclo detectado en matriz auxiliar: ${apuKey}`);
+      return null;
+    }
+    visitingSet.add(apuKey);
+
+    // a) Materiales (Insumos simples)
     let sumaMateriales = 0;
     const matDetalle = (apu.materiales || []).map(item => {
       const mat = materialesMap[item.materialId] || {};
@@ -78,7 +87,26 @@ export function calculateAPUEngine(data, fsrCalculated) {
       };
     });
 
-    // b) Mano de Obra (Cuadrillas)
+    // b) Auxiliares (Matrices Sub-compuestas)
+    let sumaAuxiliares = 0;
+    const auxDetalle = (apu.auxiliares || []).map(item => {
+      const auxCalculado = computeSingleAPU(item.auxiliarId, new Set(visitingSet));
+      const pAux = auxCalculado ? auxCalculado.costoDirecto : 0;
+      const cAux = item.consumo || 0;
+      const importe = pAux * cAux;
+      sumaAuxiliares += importe;
+      return {
+        ...item,
+        codigoConcepto: auxCalculado?.codigoConcepto || item.auxiliarId,
+        descripcion: auxCalculado?.descripcion || 'Matriz Auxiliar',
+        unidad: auxCalculado?.unidad || 'M3',
+        pAux,
+        cAux,
+        importe
+      };
+    });
+
+    // c) Mano de Obra (Cuadrillas)
     let sumaManoObra = 0;
     const moDetalle = (apu.manoObra || []).map(item => {
       const cuad = cuadrillasMap[item.cuadrillaId] || {};
@@ -97,7 +125,7 @@ export function calculateAPUEngine(data, fsrCalculated) {
       };
     });
 
-    // c) Maquinaria y Equipo
+    // d) Maquinaria y Equipo
     let sumaEquipo = 0;
     const eqDetalle = (apu.equipo || []).map(item => {
       const eq = equiposMap[item.equipoId] || {};
@@ -116,28 +144,30 @@ export function calculateAPUEngine(data, fsrCalculated) {
       };
     });
 
-    // d) Herramienta de Mano y Equipo de Seguridad
+    // e) Herramienta de Mano y Equipo de Seguridad
     const hm = (sobrecostos.herramientaMano || 0) * sumaManoObra;
     const es = (sobrecostos.equipoSeguridad || 0) * sumaManoObra;
     const sumaHerramientaSeguridad = hm + es;
 
-    // e) Costo Directo (CD)
-    const costoDirecto = sumaMateriales + sumaManoObra + sumaEquipo + sumaHerramientaSeguridad;
+    // f) Costo Directo (CD) incluyendo Sub-matrices Auxiliares
+    const costoDirecto = sumaMateriales + sumaAuxiliares + sumaManoObra + sumaEquipo + sumaHerramientaSeguridad;
 
-    // f) Cascada de Sobrecostos
+    // g) Cascada de Sobrecostos (LOPSRM)
     const indirectosImporte = (sobrecostos.indirectos || 0) * costoDirecto;
     const financiamientoImporte = (sobrecostos.financiamiento || 0) * (costoDirecto + indirectosImporte);
     const utilidadImporte = (sobrecostos.utilidad || 0) * (costoDirecto + indirectosImporte + financiamientoImporte);
     const cargosAdicionalesImporte = (sobrecostos.cargosAdicionales || 0) * (costoDirecto + indirectosImporte + financiamientoImporte + utilidadImporte);
 
-    // g) Precio Unitario Final (PU)
+    // h) Precio Unitario Final (PU)
     const precioUnitario = costoDirecto + indirectosImporte + financiamientoImporte + utilidadImporte + cargosAdicionalesImporte;
     const precioUnitarioRedondeado = Math.round(precioUnitario * 100) / 100;
 
-    tarjetasCalculadas[apuKey] = {
+    const result = {
       ...apu,
       matDetalle,
       sumaMateriales,
+      auxDetalle,
+      sumaAuxiliares,
       moDetalle,
       sumaManoObra,
       eqDetalle,
@@ -153,6 +183,13 @@ export function calculateAPUEngine(data, fsrCalculated) {
       precioUnitario,
       precioUnitarioRedondeado
     };
+
+    tarjetasCalculadas[apuKey] = result;
+    return result;
+  };
+
+  Object.keys(tarjetasAPU).forEach(apuKey => {
+    computeSingleAPU(apuKey);
   });
 
   return {
@@ -162,3 +199,4 @@ export function calculateAPUEngine(data, fsrCalculated) {
     tarjetasCalculadas
   };
 }
+

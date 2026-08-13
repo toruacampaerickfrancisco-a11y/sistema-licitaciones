@@ -1,180 +1,155 @@
 import React from 'react';
-import { Calculator, X, Hammer, HardHat, Wrench, Shield, ChevronUp, ChevronDown } from 'lucide-react';
+import { Layers, ChevronRight } from 'lucide-react';
 import { formatCurrency } from './DashboardView';
 
-export default function OpusBottomPanel({ apu, onClose, onUpdateApuItem }) {
-  const [collapsed, setCollapsed] = React.useState(false);
-  const [activeMatrixTab, setActiveMatrixTab] = React.useState('todos');
+export default function OpusBottomPanel({ 
+  selectedApu, 
+  apuResult, 
+  onNavigateToApu 
+}) {
+  const tarjetas = apuResult?.tarjetasCalculadas || {};
+  const currentApu = tarjetas[selectedApu?.item] || tarjetas[selectedApu?.apuId] || Object.values(tarjetas)[0];
 
-  if (!apu) return null;
+  if (!selectedApu || !currentApu) {
+    return (
+      <div className="opus-inspector-panel" style={{ alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
+        Selecciona un concepto del presupuesto superior para auditar su matriz APU en vivo.
+      </div>
+    );
+  }
 
-  const totalMat = apu.sumaMateriales || 0;
-  const totalMo = apu.sumaManoObra || 0;
-  const totalEq = apu.sumaEquipo || 0;
-  const totalHmEs = apu.sumaHerramientaSeguridad || 0;
+  const matList = currentApu.matDetalle || [];
+  const auxList = currentApu.auxDetalle || [];
+  const moList = currentApu.moDetalle || [];
 
   return (
-    <div className="bg-[#f8fafc] border-t-2 border-blue-600 shadow-lg text-xs text-slate-800 shrink-0 font-sans">
-      {/* Matrix Header */}
-      <div className="bg-[#1d4ed8] text-white px-3 py-1 flex items-center justify-between font-sans text-[11px]">
-        <div className="flex items-center gap-2">
-          <button onClick={() => setCollapsed(!collapsed)} className="text-blue-100 hover:text-white">
-            {collapsed ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          </button>
-          <span className="font-bold font-mono">DESGLOSE DE MATRIZ DE PRECIO UNITARIO: {apu.codigoConcepto}</span>
-          <span>-</span>
-          <span className="text-blue-100 font-medium truncate max-w-xl">{apu.descripcion}</span>
+    <div className="opus-inspector-panel">
+      {/* Panel Header */}
+      <div className="opus-inspector-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Layers size={14} color="#fbbf24" />
+          <span style={{ fontWeight: 700, color: '#f8fafc' }}>
+            Inspector APU en Vivo: <span style={{ fontFamily: 'var(--font-mono)', color: '#38bdf8' }}>{currentApu.codigoConcepto || selectedApu.item}</span>
+          </span>
+          <span style={{ color: '#94a3b8', maxWidth: '500px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            — {currentApu.descripcion}
+          </span>
         </div>
 
-        <div className="flex items-center gap-4">
-          <span className="font-bold text-emerald-300 font-mono text-xs">
-            PU: {formatCurrency(apu.precioUnitarioRedondeado)} / {apu.unidad}
-          </span>
-          <button onClick={onClose} className="text-blue-100 hover:text-red-300 p-0.5">
-            <X className="w-3.5 h-3.5" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div>
+            <span style={{ fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase', marginRight: '6px' }}>P.U. Final:</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 800, color: '#fde047', fontSize: '13px' }}>
+              {formatCurrency(currentApu.precioUnitarioRedondeado || currentApu.precioUnitario)} / {currentApu.unidad}
+            </span>
+          </div>
+
+          <button
+            onClick={() => onNavigateToApu(currentApu.id || selectedApu.item)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              background: 'rgba(56, 189, 248, 0.15)',
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              color: '#38bdf8',
+              padding: '3px 8px',
+              borderRadius: '6px',
+              fontSize: '10px',
+              fontWeight: 700,
+              cursor: 'pointer'
+            }}
+          >
+            Editar Matriz
+            <ChevronRight size={12} />
           </button>
         </div>
       </div>
 
-      {!collapsed && (
-        <div className="p-1.5 space-y-1 bg-white">
-          {/* Matrix Subtabs (Matching 3rd screenshot subtab icons & totals) */}
-          <div className="flex items-center gap-1.5 border-b border-slate-200 pb-1 text-[11px] font-semibold text-slate-700 overflow-x-auto scrollbar-none">
-            <button
-              onClick={() => setActiveMatrixTab('todos')}
-              className={`flex items-center gap-1 px-2.5 py-0.5 rounded transition ${activeMatrixTab === 'todos' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-700'}`}
-            >
-              <span>Todos</span>
-              <span className="font-mono text-[10px]">{formatCurrency(apu.costoDirecto)}</span>
-            </button>
-
-            <button
-              onClick={() => setActiveMatrixTab('materiales')}
-              className={`flex items-center gap-1 px-2.5 py-0.5 rounded transition ${activeMatrixTab === 'materiales' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-700'}`}
-            >
-              <Hammer className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Materiales</span>
-              <span className="font-mono text-[10px]">{formatCurrency(totalMat)}</span>
-            </button>
-
-            <button
-              onClick={() => setActiveMatrixTab('manoObra')}
-              className={`flex items-center gap-1 px-2.5 py-0.5 rounded transition ${activeMatrixTab === 'manoObra' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-700'}`}
-            >
-              <HardHat className="w-3.5 h-3.5 text-amber-600" />
-              <span>Mano de obra</span>
-              <span className="font-mono text-[10px]">{formatCurrency(totalMo)}</span>
-            </button>
-
-            <button
-              onClick={() => setActiveMatrixTab('equipo')}
-              className={`flex items-center gap-1 px-2.5 py-0.5 rounded transition ${activeMatrixTab === 'equipo' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-700'}`}
-            >
-              <Wrench className="w-3.5 h-3.5 text-cyan-600" />
-              <span>Equipos</span>
-              <span className="font-mono text-[10px]">{formatCurrency(totalEq)}</span>
-            </button>
-
-            <button
-              onClick={() => setActiveMatrixTab('herramientas')}
-              className={`flex items-center gap-1 px-2.5 py-0.5 rounded transition ${activeMatrixTab === 'herramientas' ? 'bg-blue-600 text-white font-bold' : 'hover:bg-slate-100 text-slate-700'}`}
-            >
-              <Shield className="w-3.5 h-3.5 text-purple-600" />
-              <span>Herramientas</span>
-              <span className="font-mono text-[10px]">{formatCurrency(totalHmEs)}</span>
-            </button>
-          </div>
-
-          {/* Matrix Content Table (Matching 3rd screenshot matrix columns) */}
-          <div className="max-h-36 overflow-y-auto">
-            <table className="opus24-grid">
-              <thead>
-                <tr>
-                  <th className="w-8 text-center">#</th>
-                  <th className="w-8 text-center">C</th>
-                  <th className="w-20">Clave</th>
-                  <th>Descripción</th>
-                  <th className="w-14 text-center">Unidad</th>
-                  <th className="w-20 text-right">Cantidad</th>
-                  <th className="w-24 text-right">Rendimiento</th>
-                  <th className="w-24 text-right">Costo unitario</th>
-                  <th className="w-28 text-right">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Materiales */}
-                {(activeMatrixTab === 'todos' || activeMatrixTab === 'materiales') && apu.matDetalle.map((m, idx) => (
-                  <tr key={`mat-${idx}`}>
-                    <td className="text-center font-mono text-slate-400">{idx + 1}</td>
-                    <td className="text-center font-bold text-emerald-600">M</td>
-                    <td className="font-mono text-slate-700 font-bold">{m.codigo}</td>
-                    <td className="text-slate-800 font-medium">{m.descripcion}</td>
-                    <td className="text-center font-mono text-slate-600 font-semibold">{m.unidad}</td>
-                    <td className="text-right font-mono">1.0000</td>
-                    <td className="text-right font-mono">
-                      <input
-                        type="number"
-                        step="any"
-                        value={m.cm}
-                        onChange={(e) => onUpdateApuItem(apu.id, 'materiales', idx, 'consumo', parseFloat(e.target.value) || 0)}
-                        className="w-20 bg-slate-50 border border-slate-300 text-blue-800 text-right px-1 py-0.5 rounded font-bold"
-                      />
-                    </td>
-                    <td className="text-right font-mono">{formatCurrency(m.pm)}</td>
-                    <td className="text-right font-mono font-bold text-slate-900">{formatCurrency(m.importe)}</td>
-                  </tr>
-                ))}
-
-                {/* Mano de obra */}
-                {(activeMatrixTab === 'todos' || activeMatrixTab === 'manoObra') && apu.moDetalle.map((mo, idx) => (
-                  <tr key={`mo-${idx}`}>
-                    <td className="text-center font-mono text-slate-400">{idx + 1}</td>
-                    <td className="text-center font-bold text-amber-600">MO</td>
-                    <td className="font-mono text-slate-700 font-bold">{mo.codigo}</td>
-                    <td className="text-slate-800 font-medium">{mo.nombre}</td>
-                    <td className="text-center font-mono text-slate-600 font-semibold">{mo.unidad}</td>
-                    <td className="text-right font-mono">1.0000</td>
-                    <td className="text-right font-mono">
-                      <input
-                        type="number"
-                        step="any"
-                        value={mo.rendimiento}
-                        onChange={(e) => onUpdateApuItem(apu.id, 'manoObra', idx, 'rendimiento', parseFloat(e.target.value) || 1)}
-                        className="w-20 bg-slate-50 border border-slate-300 text-blue-800 text-right px-1 py-0.5 rounded font-bold"
-                      />
-                    </td>
-                    <td className="text-right font-mono">{formatCurrency(mo.sr)}</td>
-                    <td className="text-right font-mono font-bold text-slate-900">{formatCurrency(mo.importe)}</td>
-                  </tr>
-                ))}
-
-                {/* Equipos */}
-                {(activeMatrixTab === 'todos' || activeMatrixTab === 'equipo') && apu.eqDetalle.map((eq, idx) => (
-                  <tr key={`eq-${idx}`}>
-                    <td className="text-center font-mono text-slate-400">{idx + 1}</td>
-                    <td className="text-center font-bold text-cyan-600">EQ</td>
-                    <td className="font-mono text-slate-700 font-bold">{eq.codigo}</td>
-                    <td className="text-slate-800 font-medium">{eq.descripcion}</td>
-                    <td className="text-center font-mono text-slate-600 font-semibold">{eq.unidad}</td>
-                    <td className="text-right font-mono">1.0000</td>
-                    <td className="text-right font-mono">
-                      <input
-                        type="number"
-                        step="any"
-                        value={eq.rendimiento}
-                        onChange={(e) => onUpdateApuItem(apu.id, 'equipo', idx, 'rendimiento', parseFloat(e.target.value) || 1)}
-                        className="w-20 bg-slate-50 border border-slate-300 text-blue-800 text-right px-1 py-0.5 rounded font-bold"
-                      />
-                    </td>
-                    <td className="text-right font-mono">{formatCurrency(eq.phm)}</td>
-                    <td className="text-right font-mono font-bold text-slate-900">{formatCurrency(eq.importe)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Breakdown Grid Columns */}
+      <div className="opus-inspector-grid">
+        {/* 1. Materiales */}
+        <div className="opus-inspector-card">
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700, color: '#38bdf8' }}>
+              <span>Materiales ({matList.length})</span>
+              <span style={{ fontFamily: 'var(--font-mono)' }}>{formatCurrency(currentApu.sumaMateriales)}</span>
+            </div>
+            <div style={{ marginTop: '4px', maxHeight: '85px', overflowY: 'auto' }}>
+              {matList.map(m => (
+                <div key={m.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '10px' }}>
+                  <span style={{ maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#cbd5e1' }}>{m.descripcion}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#f8fafc' }}>{formatCurrency(m.importe)}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      )}
+
+        {/* 2. Auxiliares / Submatrices */}
+        <div className="opus-inspector-card">
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700, color: '#818cf8' }}>
+              <span>Auxiliares ({auxList.length})</span>
+              <span style={{ fontFamily: 'var(--font-mono)' }}>{formatCurrency(currentApu.sumaAuxiliares)}</span>
+            </div>
+            <div style={{ marginTop: '4px', maxHeight: '85px', overflowY: 'auto' }}>
+              {auxList.length === 0 ? (
+                <span style={{ color: '#64748b', fontStyle: 'italic', fontSize: '10px' }}>Sin submatrices compuestas</span>
+              ) : (
+                auxList.map(a => (
+                  <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '10px' }}>
+                    <span style={{ maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#cbd5e1' }}>{a.descripcion}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#a5b4fc' }}>{formatCurrency(a.importe)}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Mano de Obra */}
+        <div className="opus-inspector-card">
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', textTransform: 'uppercase', fontWeight: 700, color: '#60a5fa' }}>
+              <span>Mano de Obra / FSR</span>
+              <span style={{ fontFamily: 'var(--font-mono)' }}>{formatCurrency(currentApu.sumaManoObra)}</span>
+            </div>
+            <div style={{ marginTop: '4px', maxHeight: '85px', overflowY: 'auto' }}>
+              {moList.map(mo => (
+                <div key={mo.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '2px 0', borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '10px' }}>
+                  <span style={{ maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#cbd5e1' }}>{mo.descripcion}</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: '#93c5fd' }}>{formatCurrency(mo.importe)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* 4. Resumen Cascada Sobrecostos */}
+        <div className="opus-inspector-card" style={{ background: 'linear-gradient(135deg, #131d33 0%, #0f172a 100%)', borderColor: 'rgba(251, 191, 36, 0.2)' }}>
+          <div style={{ fontSize: '10px', fontFamily: 'var(--font-mono)' }}>
+            <span style={{ textTransform: 'uppercase', fontWeight: 800, color: '#fbbf24', display: 'block', marginBottom: '4px' }}>Cascada Sobrecostos</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1', marginBottom: '2px' }}>
+              <span>Costo Directo (CD):</span>
+              <span style={{ fontWeight: 700, color: '#f8fafc' }}>{formatCurrency(currentApu.costoDirecto)}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1', marginBottom: '2px' }}>
+              <span>+ Indirectos Obra:</span>
+              <span style={{ color: '#fde047' }}>{formatCurrency(currentApu.indirectosImporte)}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#cbd5e1', marginBottom: '2px' }}>
+              <span>+ Utilidad:</span>
+              <span style={{ color: '#86efac' }}>{formatCurrency(currentApu.utilidadImporte)}</span>
+            </div>
+          </div>
+
+          <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '4px', display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '11px', color: '#fde047' }}>
+            <span>P.U. FINAL:</span>
+            <span>{formatCurrency(currentApu.precioUnitarioRedondeado || currentApu.precioUnitario)}</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

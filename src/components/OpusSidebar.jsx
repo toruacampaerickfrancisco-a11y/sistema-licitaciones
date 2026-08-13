@@ -1,231 +1,121 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
-  Folder, Calendar, PieChart, Layers, Sliders, Users, 
-  Building2, Wrench, ShieldCheck, Hammer, Truck, Pin, 
-  ChevronDown, ChevronRight, Calculator, X
+  Table, Layers, Calendar, ShieldCheck, Sliders, TrendingUp, Sparkles, Building2, Users, Wrench, FileText, PieChart
 } from 'lucide-react';
 
-export default function OpusSidebar({ activeTab, setActiveTab, projectInfo }) {
-  const [openFolders, setOpenFolders] = useState({
-    obra: true,
-    propuesta: true,
-    insumos: true,
-    ejecucion: false
-  });
-
-  const toggleFolder = (key) => {
-    setOpenFolders(prev => ({ ...prev, [key]: !prev[key] }));
-  };
-
+export default function OpusSidebar({ 
+  activeTab, 
+  setActiveTab 
+}) {
   return (
-    <aside className="mockup-sidebar shrink-0 text-xs select-none text-slate-800 font-sans">
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Sidebar Header with Pin Icon */}
-        <div className="bg-slate-200 px-2.5 py-1.5 border-b border-slate-300 font-bold text-slate-700 uppercase tracking-wider flex items-center justify-between shrink-0">
-          <span className="text-[11px] text-slate-800 whitespace-nowrap">Explorador de vistas</span>
-          <button className="text-slate-500 hover:text-slate-800" title="Fijar explorador">
-            <Pin className="w-3.5 h-3.5 rotate-45" />
-          </button>
-        </div>
-
-        {/* Navigation Tree */}
-        <div className="p-1 space-y-0.5 overflow-y-auto flex-1 scrollbar-none text-[11px]">
-          {/* Root Node: Obra / Proyecto */}
-          <div>
-            <div
-              onClick={() => toggleFolder('obra')}
-              className="flex items-center gap-1 py-1 px-1 font-bold text-slate-900 cursor-pointer hover:bg-slate-300 rounded whitespace-nowrap"
-            >
-              {openFolders.obra ? <ChevronDown className="w-3 h-3 text-slate-600 shrink-0" /> : <ChevronRight className="w-3 h-3 text-slate-600 shrink-0" />}
-              <Folder className="w-3.5 h-3.5 text-amber-500 fill-amber-400/30 shrink-0" />
-              <span className="truncate">{projectInfo.licitacion || 'Concurso CFE-0700-CSCON-0040-2025'}</span>
-            </div>
-
-            {openFolders.obra && (
-              <div className="pl-2 space-y-0.5">
-                {/* 1. Folder: Propuesta */}
-                <div>
-                  <div
-                    onClick={() => toggleFolder('propuesta')}
-                    className="flex items-center gap-1 py-1 px-1 font-bold text-slate-700 cursor-pointer hover:bg-slate-300 rounded whitespace-nowrap"
-                  >
-                    {openFolders.propuesta ? <ChevronDown className="w-3 h-3 text-slate-500 shrink-0" /> : <ChevronRight className="w-3 h-3 text-slate-500 shrink-0" />}
-                    <Folder className="w-3.5 h-3.5 text-amber-500 fill-amber-400/30 shrink-0" />
-                    <span>Propuesta</span>
-                  </div>
-
-                  {openFolders.propuesta && (
-                    <div className="pl-3 space-y-0.5 font-medium">
-                      {/* Presupuesto programable */}
-                      <div
-                        onClick={() => setActiveTab('catalogo')}
-                        className={`flex items-center gap-1.5 px-1.5 py-1 rounded cursor-pointer transition whitespace-nowrap ${
-                          activeTab === 'catalogo'
-                            ? 'bg-slate-300 text-slate-900 font-bold'
-                            : 'text-slate-700 hover:bg-slate-300'
-                        }`}
-                      >
-                        <Calendar className="w-3.5 h-3.5 text-sky-600 shrink-0" />
-                        <span>Presupuesto programable</span>
-                      </div>
-
-                      {/* Análisis de presupuesto */}
-                      <div
-                        onClick={() => setActiveTab('dashboard')}
-                        className={`flex items-center gap-1.5 px-1.5 py-1 rounded cursor-pointer transition whitespace-nowrap ${
-                          activeTab === 'dashboard'
-                            ? 'bg-slate-300 text-slate-900 font-bold'
-                            : 'text-slate-700 hover:bg-slate-300'
-                        }`}
-                      >
-                        <PieChart className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                        <span>Análisis de presupuesto</span>
-                      </div>
-
-                      {/* Conceptos */}
-                      <div
-                        onClick={() => setActiveTab('catalogo')}
-                        className="flex items-center gap-1.5 px-1.5 py-1 text-slate-700 hover:bg-slate-300 rounded cursor-pointer whitespace-nowrap"
-                      >
-                        <Layers className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                        <span>Conceptos</span>
-                      </div>
-
-                      {/* Cálculo de FSR / IMSS */}
-                      <div
-                        onClick={() => setActiveTab('fsr')}
-                        className={`flex items-center gap-1.5 px-1.5 py-1 rounded cursor-pointer transition whitespace-nowrap ${
-                          activeTab === 'fsr'
-                            ? 'bg-slate-300 text-slate-900 font-bold'
-                            : 'text-slate-700 hover:bg-slate-300'
-                        }`}
-                      >
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        <span>Cálculo de FSR / IMSS</span>
-                      </div>
-
-                      {/* Personal en indirectos */}
-                      <div
-                        onClick={() => setActiveTab('cuadrillas')}
-                        className="flex items-center gap-1.5 px-1.5 py-1 text-slate-700 hover:bg-slate-300 rounded cursor-pointer whitespace-nowrap"
-                      >
-                        <Users className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                        <span>Personal en indirectos</span>
-                      </div>
-
-                      {/* Cálculo de sobrecostos */}
-                      <div
-                        onClick={() => setActiveTab('sobrecostos')}
-                        className={`flex items-center gap-1.5 px-1.5 py-1 rounded cursor-pointer transition whitespace-nowrap ${
-                          activeTab === 'sobrecostos'
-                            ? 'bg-slate-300 text-slate-900 font-bold'
-                            : 'text-slate-700 hover:bg-slate-300'
-                        }`}
-                      >
-                        <Sliders className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                        <span>Cálculo de sobrecostos</span>
-                      </div>
-
-                      {/* Explosión de insumos */}
-                      <div
-                        onClick={() => setActiveTab('insumos')}
-                        className={`flex items-center gap-1.5 px-1.5 py-1 rounded cursor-pointer transition whitespace-nowrap ${
-                          activeTab === 'insumos'
-                            ? 'bg-slate-300 text-slate-900 font-bold'
-                            : 'text-slate-700 hover:bg-slate-300'
-                        }`}
-                      >
-                        <Building2 className="w-3.5 h-3.5 text-cyan-600 shrink-0" />
-                        <span>Explosión de insumos</span>
-                      </div>
-
-                      {/* Programa de suministros */}
-                      <div
-                        onClick={() => setActiveTab('catalogo')}
-                        className="flex items-center gap-1.5 px-1.5 py-1 text-slate-700 hover:bg-slate-300 rounded cursor-pointer whitespace-nowrap"
-                      >
-                        <Calendar className="w-3.5 h-3.5 text-orange-600 shrink-0" />
-                        <span>Programa de suministros</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* 2. Folder: Insumos */}
-                <div>
-                  <div
-                    onClick={() => toggleFolder('insumos')}
-                    className="flex items-center gap-1 py-1 px-1 font-bold text-slate-700 cursor-pointer hover:bg-slate-300 rounded whitespace-nowrap"
-                  >
-                    {openFolders.insumos ? <ChevronDown className="w-3 h-3 text-slate-500 shrink-0" /> : <ChevronRight className="w-3 h-3 text-slate-500 shrink-0" />}
-                    <Folder className="w-3.5 h-3.5 text-amber-500 fill-amber-400/30 shrink-0" />
-                    <span>Insumos</span>
-                  </div>
-
-                  {openFolders.insumos && (
-                    <div className="pl-3 space-y-0.5 font-medium">
-                      <div onClick={() => setActiveTab('insumos')} className="flex items-center gap-1.5 px-1.5 py-1 text-slate-700 hover:bg-slate-300 rounded cursor-pointer whitespace-nowrap">
-                        <Users className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-                        <span>Todos</span>
-                      </div>
-
-                      <div onClick={() => setActiveTab('insumos')} className="flex items-center gap-1.5 px-1.5 py-1 text-slate-700 hover:bg-slate-300 rounded cursor-pointer whitespace-nowrap">
-                        <Building2 className="w-3.5 h-3.5 text-red-500 shrink-0" />
-                        <span>Materiales</span>
-                      </div>
-
-                      <div onClick={() => setActiveTab('cuadrillas')} className="flex items-center gap-1.5 px-1.5 py-1 text-slate-700 hover:bg-slate-300 rounded cursor-pointer whitespace-nowrap">
-                        <Users className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                        <span>Mano de obra</span>
-                      </div>
-
-                      <div onClick={() => setActiveTab('insumos')} className="flex items-center gap-1.5 px-1.5 py-1 text-slate-700 hover:bg-slate-300 rounded cursor-pointer whitespace-nowrap">
-                        <Hammer className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                        <span>Herramienta</span>
-                      </div>
-
-                      <div onClick={() => setActiveTab('insumos')} className="flex items-center gap-1.5 px-1.5 py-1 text-slate-700 hover:bg-slate-300 rounded cursor-pointer whitespace-nowrap">
-                        <Wrench className="w-3.5 h-3.5 text-[#0090ff] shrink-0" />
-                        <span>Equipo</span>
-                      </div>
-
-                      <div onClick={() => setActiveTab('apu')} className="flex items-center gap-1.5 px-1.5 py-1 text-slate-700 hover:bg-slate-300 rounded cursor-pointer whitespace-nowrap">
-                        <Calculator className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
-                        <span>Matrices</span>
-                      </div>
-
-                      <div onClick={() => setActiveTab('insumos')} className="flex items-center gap-1.5 px-1.5 py-1 text-slate-700 hover:bg-slate-300 rounded cursor-pointer whitespace-nowrap">
-                        <Truck className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                        <span>Fletes</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* 3. Folder: Ejecución */}
-                <div>
-                  <div
-                    onClick={() => toggleFolder('ejecucion')}
-                    className="flex items-center gap-1 py-1 px-1 font-bold text-slate-700 cursor-pointer hover:bg-slate-300 rounded whitespace-nowrap"
-                  >
-                    {openFolders.ejecucion ? <ChevronDown className="w-3 h-3 text-slate-500 shrink-0" /> : <ChevronRight className="w-3 h-3 text-slate-500 shrink-0" />}
-                    <Folder className="w-3.5 h-3.5 text-amber-500 fill-amber-400/30 shrink-0" />
-                    <span>Ejecución</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+    <aside className="opus-explorer-sidebar">
+      <div className="opus-explorer-header">
+        Explorador de Proyecto
       </div>
 
-      {/* Bottom Info Box */}
-      <div className="p-2 border-t border-slate-300 bg-slate-200 text-[10px] text-slate-700 font-mono space-y-0.5 shrink-0">
-        <div className="flex items-center justify-between font-bold">
-          <span className="truncate">Presupuesto programable (Catálogo CFE)</span>
-          <X className="w-3 h-3 cursor-pointer text-slate-500 hover:text-slate-800 shrink-0" />
-        </div>
-        <div className="truncate">Licitación: Anexo 11 CFE</div>
+      <div style={{ padding: '4px 0', overflowY: 'auto' }}>
+        {/* Propuesta & Presupuesto */}
+        <div className="opus-explorer-group">Propuesta</div>
+        <button
+          onClick={() => setActiveTab('catalogo')}
+          className={`opus-explorer-item ${activeTab === 'catalogo' ? 'active' : ''}`}
+        >
+          <Table size={13} color="#38bdf8" />
+          <span>Presupuesto Obra</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('apu')}
+          className={`opus-explorer-item ${activeTab === 'apu' ? 'active' : ''}`}
+        >
+          <Layers size={13} color="#fbbf24" />
+          <span>Matrices APU</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('gantt')}
+          className={`opus-explorer-item ${activeTab === 'gantt' ? 'active' : ''}`}
+        >
+          <Calendar size={13} color="#fb923c" />
+          <span>Programa Gantt</span>
+        </button>
+
+        {/* Factores LOPSRM */}
+        <div className="opus-explorer-group" style={{ marginTop: '8px' }}>Factores LOPSRM</div>
+        <button
+          onClick={() => setActiveTab('fsr')}
+          className={`opus-explorer-item ${activeTab === 'fsr' ? 'active' : ''}`}
+        >
+          <ShieldCheck size={13} color="#34d399" />
+          <span>Cálculo FSR / IMSS</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('indirectosAnalitico')}
+          className={`opus-explorer-item ${activeTab === 'indirectosAnalitico' ? 'active' : ''}`}
+        >
+          <Sliders size={13} color="#fbbf24" />
+          <span>Desglose Indirectos</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('sobrecostos')}
+          className={`opus-explorer-item ${activeTab === 'sobrecostos' ? 'active' : ''}`}
+        >
+          <Sliders size={13} color="#818cf8" />
+          <span>Cascada Sobrecostos</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('ajusteCostos')}
+          className={`opus-explorer-item ${activeTab === 'ajusteCostos' ? 'active' : ''}`}
+        >
+          <TrendingUp size={13} color="#34d399" />
+          <span>Ajuste Costos (INEGI)</span>
+        </button>
+
+        {/* Catálogos & Recursos */}
+        <div className="opus-explorer-group" style={{ marginTop: '8px' }}>Catálogos</div>
+        <button
+          onClick={() => setActiveTab('masterCatalog')}
+          className={`opus-explorer-item ${activeTab === 'masterCatalog' ? 'active' : ''}`}
+        >
+          <Sparkles size={13} color="#818cf8" />
+          <span>ConstruBase (+2,500)</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('insumos')}
+          className={`opus-explorer-item ${activeTab === 'insumos' ? 'active' : ''}`}
+        >
+          <Building2 size={13} color="#22d3ee" />
+          <span>Explosión Insumos</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('cuadrillas')}
+          className={`opus-explorer-item ${activeTab === 'cuadrillas' ? 'active' : ''}`}
+        >
+          <Users size={13} color="#60a5fa" />
+          <span>Cuadrillas Obra</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('costoHorario')}
+          className={`opus-explorer-item ${activeTab === 'costoHorario' ? 'active' : ''}`}
+        >
+          <Wrench size={13} color="#fbbf24" />
+          <span>Costos Horarios (Phm)</span>
+        </button>
+
+        {/* Reportes */}
+        <div className="opus-explorer-group" style={{ marginTop: '8px' }}>Auditoría</div>
+        <button
+          onClick={() => setActiveTab('reportesOficiales')}
+          className={`opus-explorer-item ${activeTab === 'reportesOficiales' ? 'active' : ''}`}
+        >
+          <FileText size={13} color="#34d399" />
+          <span>Formatos CFE</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('resumen')}
+          className={`opus-explorer-item ${activeTab === 'resumen' ? 'active' : ''}`}
+        >
+          <PieChart size={13} color="#38bdf8" />
+          <span>Dashboard KPIs</span>
+        </button>
       </div>
     </aside>
   );

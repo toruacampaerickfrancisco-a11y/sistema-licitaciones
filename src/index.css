@@ -1,224 +1,425 @@
-/* Pure Standard CSS Rules for OPUS 25 Workspace - Independent of Tailwind */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-app: #080c14;
+  --bg-surface: #0f172a;
+  --bg-elevated: #1e293b;
+  --bg-sidebar: #0b1120;
+  --bg-explorer: #0f172a;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-focus: #38bdf8;
+  --accent-cyan: #06b6d4;
+  --accent-blue: #3b82f6;
+  --accent-amber: #f59e0b;
+  --accent-emerald: #10b981;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
 
 * {
   box-sizing: border-box;
-}
-
-:root {
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color-scheme: light;
+  margin: 0;
+  padding: 0;
 }
 
 html, body, #root {
-  margin: 0;
-  padding: 0;
   width: 100vw;
   height: 100vh;
-  overflow: hidden !important;
-  background-color: #0b4a72; /* Steel blue outer border */
-  color: #1e293b;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-size: 11px;
   -webkit-font-smoothing: antialiased;
+}
+
+/* 1. App Titlebar */
+.opus-titlebar {
+  height: 32px;
+  background: linear-gradient(180deg, #131d33 0%, #0b1120 100%);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 11px;
   user-select: none;
 }
 
-code, pre, .font-mono {
-  font-family: 'JetBrains Mono', monospace;
+.opus-titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
 }
 
-/* Outer Window Frame */
-.window-frame {
-  width: 100vw !important;
-  height: 100vh !important;
-  border: 8px solid #0b4a72 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  background: #ffffff !important;
-  overflow: hidden !important;
+.opus-titlebar-badge {
+  background: linear-gradient(90deg, #0ea5e9, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.05em;
 }
 
-/* Workspace Body: Side-by-side row of Sidebar + Center Table */
-.workspace-body {
-  display: flex !important;
-  flex-direction: row !important;
-  flex: 1 !important;
-  height: calc(100vh - 74px) !important;
-  overflow: hidden !important;
+/* 2. Ribbon Bar */
+.opus-ribbon {
+  background: #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 
-/* Top Ribbon Menu Bar - Strictly Horizontal Row */
-.mockup-ribbon-bar {
-  background: #ffffff !important;
-  border-bottom: 2px solid #0b4a72 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  flex-shrink: 0 !important;
-  height: 66px !important;
+.opus-ribbon-tabs {
+  display: flex;
+  background: #080c14;
+  padding: 0 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.ribbon-tabs-container {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  gap: 4px !important;
-  padding: 4px 8px 0 8px !important;
-  background: #e2e8f0 !important;
-  border-bottom: 1px solid #cbd5e1 !important;
-  height: 28px !important;
+.opus-ribbon-tab {
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-top: 2px solid transparent;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.mockup-ribbon-tab {
-  padding: 2px 10px !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  color: #334155 !important;
-  border-top-left-radius: 4px !important;
-  border-top-right-radius: 4px !important;
-  border: 1px solid #cbd5e1 !important;
-  border-bottom: none !important;
-  background: #cbd5e1 !important;
-  text-transform: uppercase !important;
-  white-space: nowrap !important;
-  cursor: pointer !important;
+.opus-ribbon-tab:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.mockup-ribbon-tab.active {
-  color: #0284c7 !important;
-  background: #ffffff !important;
-  border-top: 2px solid #0284c7 !important;
-  border-left: 1px solid #0b4a72 !important;
-  border-right: 1px solid #0b4a72 !important;
+.opus-ribbon-tab.active {
+  color: #38bdf8;
+  background: #0f172a;
+  border-top: 2px solid #38bdf8;
 }
 
-.ribbon-buttons-container {
-  display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 4px 8px !important;
-  background: #ffffff !important;
-  height: 38px !important;
-  overflow-x: auto !important;
+.opus-ribbon-shelf {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  gap: 8px;
+  height: 64px;
+  overflow-x: auto;
 }
 
-.mockup-command-btn {
-  display: inline-flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  gap: 5px !important;
-  padding: 3px 8px !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  color: #334155 !important;
-  background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 4px !important;
-  white-space: nowrap !important;
-  flex-shrink: 0 !important;
-  cursor: pointer !important;
+.opus-ribbon-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  height: 54px;
 }
 
-.mockup-command-btn:hover {
-  background: #f8fafc !important;
-  border-color: #0284c7 !important;
-  color: #0284c7 !important;
+.opus-ribbon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  min-width: 60px;
+  height: 48px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  gap: 3px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
-.mockup-command-btn.active {
-  background: #e0f2fe !important;
-  border-color: #0284c7 !important;
-  color: #0369a1 !important;
-  font-weight: 700 !important;
+.opus-ribbon-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  transform: translateY(-1px);
 }
 
-/* Sidebar "Explorador de vistas" */
-.mockup-sidebar {
-  background: #f1f5f9 !important;
-  border-right: 2px solid #0b4a72 !important;
-  width: 240px !important;
-  min-width: 240px !important;
-  max-width: 240px !important;
-  height: 100% !important;
-  flex-shrink: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: space-between !important;
-  overflow: hidden !important;
+.opus-ribbon-btn.active {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
 }
 
-/* Center Workspace */
-.workspace-center {
-  flex: 1 !important;
-  height: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  overflow-y: auto !important;
-  background: #ffffff !important;
+/* 3. Main Workspace Flex */
+.opus-workspace {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 120px);
+  overflow: hidden;
 }
 
-/* Central DataGrid Table */
-.mockup-table {
-  width: 100% !important;
-  border-collapse: collapse !important;
-  font-size: 11px !important;
-  background: #ffffff !important;
+/* Left Sidebar 1: Modules */
+.opus-modules-sidebar {
+  width: 170px;
+  min-width: 170px;
+  background: #080c14;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
-.mockup-table th {
-  background: #334155 !important;
-  color: #ffffff !important;
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  padding: 6px 10px !important;
-  border: 1px solid #475569 !important;
-  text-align: left !important;
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 10 !important;
+.opus-module-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  border-left: 3px solid transparent;
+  transition: all 0.15s ease;
+  width: 100%;
 }
 
-.mockup-table td {
-  padding: 4px 8px !important;
-  border: 1px solid #cbd5e1 !important;
-  background: #ffffff !important;
-  color: #1e293b !important;
-  white-space: nowrap !important;
+.opus-module-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
 }
 
-.mockup-table tr:nth-child(even) td {
-  background: #f8fafc !important;
+.opus-module-item.active {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border-left: 3px solid #38bdf8;
+  font-weight: 700;
 }
 
-.mockup-table input {
-  background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 3px !important;
-  padding: 2px 6px !important;
-  font-size: 11px !important;
-  color: #0f172a !important;
+.opus-module-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.mockup-table input:focus {
-  outline: 2px solid #0284c7 !important;
-  border-color: #0284c7 !important;
+/* Left Sidebar 2: Tree Explorer */
+.opus-explorer-sidebar {
+  width: 210px;
+  min-width: 210px;
+  background: #0b1120;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.opus-explorer-header {
+  padding: 8px 12px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
+.opus-explorer-group {
+  padding: 6px 10px 2px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #94a3b8;
-  border-radius: 3px;
+.opus-explorer-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 18px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  text-align: left;
+  width: 100%;
+  transition: all 0.12s ease;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #0284c7;
+.opus-explorer-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+}
+
+.opus-explorer-item.active {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+/* Main View Center */
+.opus-main-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #090d16;
+}
+
+.opus-view-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* 4. KPI Top Bar */
+.opus-kpi-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: #0c1222;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.opus-kpi-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.opus-kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  background: #131d33;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}
+
+.opus-kpi-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.opus-kpi-value {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+/* 5. Datagrid Table */
+.opus-grid-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.opus-grid-table thead th {
+  background: #0f172a;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 1px solid rgba(255, 255, 255, 0.04);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  text-align: left;
+}
+
+.opus-grid-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.opus-grid-table tbody tr:hover {
+  background-color: rgba(56, 189, 248, 0.06);
+}
+
+.opus-grid-table tbody tr.selected {
+  background-color: rgba(56, 189, 248, 0.14) !important;
+}
+
+.opus-grid-table tbody tr.group-header {
+  background: linear-gradient(90deg, #131d33 0%, #0f172a 100%);
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+.opus-grid-table tbody td {
+  padding: 7px 10px;
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* 6. Live APU Bottom Inspector */
+.opus-inspector-panel {
+  height: 180px;
+  min-height: 180px;
+  background: #0a0f1d;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.opus-inspector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background: #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.opus-inspector-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 8px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.opus-inspector-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* 7. Statusbar */
+.opus-statusbar {
+  height: 24px;
+  background: #080c14;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
 }
